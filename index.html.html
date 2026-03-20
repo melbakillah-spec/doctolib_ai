@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Doctolib AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-primary: #1a6bff;
+    --blue-dark: #1455d9;
+    --blue-light: #e8f0ff;
+    --teal-primary: #00b5a3;
+    --teal-light: #e0f7f4;
+    --green-600: #16a34a;
+    --green-light: #dcfce7;
+    --orange-primary: #f97316;
+    --orange-light: #fff7ed;
+    --red-primary: #ef4444;
+    --red-light: #fef2f2;
+    --navy: #0f1729;
+    --gray-muted: #6b7280;
+    --border-light: #e5e9f0;
+    --bg-app: #f5f7fb;
+    --white: #ffffff;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-app);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 60px rgba(0,0,0,0.12);
+    position: relative;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-light);
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--blue-primary);
+  }
+
+  .logo-icon {
+    width: 28px; height: 28px;
+    background: var(--blue-primary);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 14px;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 10px; }
+
+  .notif-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    border: none;
+  }
+  .notif-dot {
+    width: 8px; height: 8px;
+    background: var(--red-primary);
+    border-radius: 50%;
+    position: absolute;
+    top: 4px; right: 4px;
+    border: 2px solid white;
+  }
+
+  .avatar-sm {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--blue-primary);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+  }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-light);
+    position: sticky;
+    top: 56px;
+    z-index: 90;
+  }
+
+  .tab-item {
+    flex: 1;
+    padding: 12px 2px;
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+    color: var(--gray-muted);
+    font-family: 'Sora', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .tab-item.active { color: var(--blue-primary); border-bottom-color: var(--blue-primary); }
+
+  /* MAIN */
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+  }
+
+  /* PANELS */
+  .panel { display: none; padding: 16px; animation: fadeSlide 0.25s ease; }
+  .panel.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border-light);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: 'Sora', sans-serif;
+  }
+  .badge-blue { background: var(--blue-light); color: #1e3a8a; }
+  .badge-teal { background: var(--teal-light); color: #065f46; }
+  .badge-green { background: var(--green-light); color: #14532d; }
+  .badge-orange { background: var(--orange-light); color: #9a3412; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn-primary { background: var(--blue-primary); color: white; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .btn-outline { background: white; color: var(--blue-primary); border: 1.5px solid var(--blue-primary); }
+  .btn-ghost { background: transparent; color: var(--gray-muted); border: 1px solid var(--border-light); }
+  .btn-full { width: 100%; padding: 13px; border-radius: 12px; font-size: 14px; font-weight: 600; background: var(--blue-primary); color: white; border: none; cursor: pointer; transition: all 0.15s; font-family: 'Sora', sans-serif; }
+  .btn-full:hover { background: var(--blue-dark); }
+  .btn-full:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-full-ghost { width: 100%; padding: 13px; border-radius: 12px; font-size: 13px; font-weight: 500; background: transparent; color: var(--gray-muted); border: 1.5px solid var(--border-light); cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+
+  /* HOME */
+  .home-hero {
+    background: var(--blue-primary);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 30px rgba(26,107,255,0.3);
+  }
+  .home-hero h2 { font-family: 'Sora', sans-serif; font-size: 19px; font-weight: 600; margin-bottom: 4px; }
+  .home-hero p { font-size: 12px; opacity: 0.85; margin-bottom: 16px; }
+  .ai-active-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Sora', sans-serif;
+  }
+  .pulse-dot {
+    width: 6px; height: 6px;
+    background: #4ade80;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+  .suggestion-box {
+    background: var(--teal-light);
+    border: 1.5px solid var(--teal-primary);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .suggestion-icon {
+    width: 36px; height: 36px;
+    background: var(--teal-primary);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .suggestion-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--teal-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: 'Sora', sans-serif;
+    margin-bottom: 4px;
+  }
+  .suggestion-text { font-size: 11.5px; color: var(--navy); line-height: 1.5; margin-bottom: 10px; }
+  .suggestion-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--gray-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Sora', sans-serif;
+    margin-bottom: 8px;
+    margin-top: 20px;
+  }
+
+  .rdv-card {
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .rdv-card:hover { border-color: var(--blue-primary); }
+  .rdv-date {
+    width: 44px; text-align: center;
+    border-radius: 10px;
+    padding: 6px;
+    flex-shrink: 0;
+  }
+  .rdv-date-blue { background: var(--blue-light); }
+  .rdv-date-teal { background: var(--teal-light); }
+  .rdv-date .day { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; line-height: 1; }
+  .rdv-date .month { font-size: 10px; text-transform: uppercase; font-weight: 600; }
+  .rdv-date-blue .day, .rdv-date-blue .month { color: var(--blue-primary); }
+  .rdv-date-teal .day, .rdv-date-teal .month { color: var(--teal-primary); }
+  .rdv-info { flex: 1; }
+  .rdv-info h4 { font-size: 13px; font-weight: 600; font-family: 'Sora', sans-serif; }
+  .rdv-info p { font-size: 11px; color: var(--gray-muted); margin-bottom: 4px; }
+  .rdv-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+  .chevron { color: var(--gray-muted); font-size: 14px; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stat-box {
+    background: var(--white);
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-num { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+  .stat-label { font-size: 10px; color: var(--gray-muted); margin-bottom: 6px; }
+
+  /* RDV STEPS */
+  .progress-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .progress-segment {
+    height: 4px;
+    flex: 1;
+    border-radius: 4px;
+    background: var(--border-light);
+    transition: background 0.3s;
+  }
+  .progress-segment.done { background: var(--blue-primary); }
+  .progress-segment.current { background: var(--teal-primary); }
+
+  .step-panel { display: none; animation: fadeSlide 0.2s ease; }
+  .step-panel.active { display: block; }
+
+  .symptom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .option-chip {
+    padding: 12px 8px;
+    border-radius: 10px;
+    border: 2px solid var(--border-light);
+    background: var(--white);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .option-chip:hover { border-color: var(--blue-primary); }
+  .option-chip.selected { border-color: var(--blue-primary); background: var(--blue-light); color: #1e3a8a; font-weight: 600; }
+
+  .dur-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .dur-chip {
+    padding: 12px 6px;
+    border-radius: 10px;
+    border: 2px solid var(--border-light);
+    background: var(--white);
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dur-chip:hover { border-color: var(--blue-primary); }
+  .dur-chip.selected { border-color: var(--blue-primary); background: var(--blue-light); color: #1e3a8a; font-weight: 600; }
+
+  /* CAMERA */
+  .camera-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    max-height: 50vh;
+    background: #111;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--border-light);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #cameraVideo {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .face-guide {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .face-oval {
+    width: 65%; height: 70%;
+    border: 4px solid rgba(255,255,255,0.45);
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  }
+  .scan-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--teal-primary);
+    box-shadow: 0 0 15px rgba(0,181,163,0.9);
+    animation: scanMove 2.5s linear infinite;
+    z-index: 10;
+  }
+  @keyframes scanMove {
+    0% { top: 10%; }
+    100% { top: 90%; }
+  }
+  .camera-label {
+    position: absolute;
+    bottom: 14px;
+    left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 10px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    z-index: 20;
+  }
+
+  .progress-wrap { margin-top: 12px; }
+  .progress-lbl { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-muted); margin-bottom: 4px; font-family: 'Sora', sans-serif; }
+  .prog-track { height: 6px; background: var(--border-light); border-radius: 6px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--teal-primary); border-radius: 6px; transition: width 0.1s linear; width: 0%; }
+
+  /* RESULT */
+  .alert-box {
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+  .alert-box.orange { background: var(--orange-light); border: 1.5px solid var(--orange-primary); }
+  .alert-box.green { background: var(--green-light); border: 1.5px solid var(--green-600); }
+  .alert-box.blue { background: var(--blue-light); border: 1.5px solid var(--blue-primary); }
+  .alert-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+  .alert-title { font-size: 12px; font-weight: 700; margin-bottom: 2px; font-family: 'Sora', sans-serif; }
+  .alert-orange .alert-title { color: var(--orange-primary); }
+  .alert-green .alert-title { color: var(--green-600); }
+  .alert-blue .alert-title { color: var(--blue-primary); }
+  .alert-sub { font-size: 11px; color: var(--gray-muted); line-height: 1.5; }
+
+  .result-card {
+    background: var(--white);
+    border: 2px solid var(--teal-primary);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .result-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .result-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .result-title { font-size: 13px; font-weight: 700; font-family: 'Sora', sans-serif; }
+  .result-sub { font-size: 10px; color: var(--gray-muted); }
+  .result-text { font-size: 12px; line-height: 1.6; color: var(--navy); margin-bottom: 14px; }
+
+  .conf-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-muted); font-family: 'Sora', sans-serif; margin-bottom: 3px; }
+  .conf-track { height: 6px; background: var(--border-light); border-radius: 6px; margin-bottom: 4px; }
+  .conf-fill { height: 100%; border-radius: 6px; transition: width 1s ease; }
+  .conf-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--gray-muted); }
+  .conf-meta strong { font-weight: 700; }
+
+  .divider { height: 1px; background: var(--border-light); margin: 12px 0; }
+
+  .indicators-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .indicator-box { background: var(--bg-app); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px; }
+  .indicator-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-muted); font-family: 'Sora', sans-serif; margin-bottom: 2px; }
+  .indicator-val { font-size: 12px; font-weight: 700; }
+  .c-green { color: var(--green-600); }
+  .c-orange { color: var(--orange-primary); }
+  .c-blue { color: var(--blue-primary); }
+
+  .plan-step { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+  .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-num.normal { background: var(--blue-primary); color: white; }
+  .step-num.warn { background: var(--orange-primary); color: white; }
+  .step-text { font-size: 12px; line-height: 1.55; color: var(--navy); }
+
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mode-chip {
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid var(--border-light);
+    background: var(--bg-app);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mode-chip.selected-green { border-color: var(--green-600); background: var(--green-light); }
+  .mode-chip.selected-blue { border-color: var(--blue-primary); background: var(--blue-light); }
+  .mode-big { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+  .mode-unit { font-size: 10px; color: var(--gray-muted); }
+  .mode-name { font-size: 12px; font-weight: 600; margin-top: 4px; }
+
+  .confirm-box {
+    background: var(--green-light);
+    border: 1.5px solid var(--green-600);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .confirm-icon { font-size: 44px; margin-bottom: 8px; }
+  .confirm-title { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; color: #15803d; margin-bottom: 4px; }
+  .confirm-sub { font-size: 12px; color: #166534; }
+
+  /* CHAT */
+  .chat-wrapper { display: flex; flex-direction: column; height: calc(100vh - 112px); padding: 16px; }
+  .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; padding-right: 2px; }
+  .chat-bubble {
+    max-width: 82%;
+    padding: 11px 14px;
+    border-radius: 18px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .bubble-user { background: var(--blue-primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .bubble-ai { background: var(--white); border: 1px solid var(--border-light); color: var(--navy); align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .typing-dots { display: flex; gap: 4px; padding: 14px; }
+  .typing-dot { width: 6px; height: 6px; background: var(--gray-muted); border-radius: 50%; animation: bounce 0.8s infinite; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100% { transform:translateY(0); } 40% { transform:translateY(-7px); } }
+
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+    background: var(--white);
+    padding: 8px 10px;
+    border: 1.5px solid var(--border-light);
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    align-items: center;
+  }
+  .chat-input-row input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--navy);
+    background: transparent;
+    padding: 4px 4px;
+  }
+  .chat-input-row input::placeholder { color: var(--gray-muted); }
+  .send-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--blue-primary);
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .send-btn:hover { background: var(--blue-dark); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* IMPACT */
+  .impact-hero {
+    background: var(--green-light);
+    border: 1.5px solid var(--green-600);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .impact-hero span { font-size: 32px; }
+  .impact-hero h3 { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: #15803d; }
+  .impact-hero p { font-size: 11px; color: #166534; }
+
+  .module-card { margin-bottom: 12px; }
+  .module-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .module-left { display: flex; align-items: center; gap: 10px; }
+  .module-icon { width: 32px; height: 32px; background: var(--bg-app); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .module-name { font-size: 12px; font-weight: 600; font-family: 'Sora', sans-serif; }
+  .module-sub { font-size: 10px; color: var(--gray-muted); }
+  .toggle { width: 38px; height: 20px; background: var(--teal-primary); border-radius: 20px; position: relative; cursor: pointer; flex-shrink: 0; }
+  .toggle-knob { width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 2px; right: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .module-bar { height: 5px; background: var(--border-light); border-radius: 5px; margin-top: 6px; }
+  .module-fill { height: 100%; border-radius: 5px; transition: width 1s ease; }
+  .module-note { font-size: 9px; color: var(--gray-muted); margin-top: 5px; }
+
+  /* PROFIL */
+  .profil-top { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .avatar-lg { width: 60px; height: 60px; border-radius: 50%; background: var(--blue-primary); color: white; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; }
+  .profil-name { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; }
+  .profil-sub { font-size: 11px; color: var(--gray-muted); margin-bottom: 4px; }
+
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 12px; font-weight: 500; }
+  .info-val { font-size: 10px; color: var(--gray-muted); margin-top: 1px; }
+  .edit-link { font-size: 10px; color: var(--blue-primary); font-weight: 500; cursor: pointer; }
+
+  /* FLOATING */
+  .fab {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    width: 54px; height: 54px;
+    background: var(--teal-primary);
+    border-radius: 50%;
+    box-shadow: 0 6px 24px rgba(0,181,163,0.4);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 200;
+    color: white;
+    font-size: 22px;
+    transition: transform 0.2s;
+    border: none;
+  }
+  .fab:hover { transform: scale(1.08); }
+
+  .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+  .btn-row .btn-full-ghost { flex: 1; }
+  .btn-row .btn-full { flex: 2; }
+
+  .card-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .card-sub { font-size: 11px; color: var(--gray-muted); margin-bottom: 14px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🩺</div>
+      Doctolib AI
+    </div>
+    <div class="header-right">
+      <button class="notif-btn">
+        🔔<span class="notif-dot"></span>
+      </button>
+      <div class="avatar-sm">MD</div>
+    </div>
+  </header>
+
+  <!-- Nav -->
+  <nav>
+    <div class="tab-item active" data-tab="home">Accueil</div>
+    <div class="tab-item" data-tab="rdv">Prendre RDV</div>
+    <div class="tab-item" data-tab="chat">Chat IA</div>
+    <div class="tab-item" data-tab="impact">Mon impact</div>
+    <div class="tab-item" data-tab="profil">Profil</div>
+  </nav>
+
+  <!-- Main -->
+  <main>
+
+    <!-- HOME -->
+    <div id="panel-home" class="panel active">
+      <div class="home-hero">
+        <h2>Bonjour, Marie 👋</h2>
+        <p>Votre assistant santé responsable est actif et prêt.</p>
+        <div class="ai-active-pill">
+          <span class="pulse-dot"></span> Module IA activé
+        </div>
+      </div>
+
+      <div class="suggestion-box">
+        <div class="suggestion-icon">💡</div>
+        <div style="flex:1">
+          <div class="suggestion-label">Suggestion IA</div>
+          <div class="suggestion-text">Votre RDV de demain pour un rhume peut être remplacé par une téléconsultation — efficace dans 80% des cas similaires.</div>
+          <div class="suggestion-actions">
+            <button class="btn btn-primary" onclick="alert('Passé en téléconsultation ✅')">Passer en téléconsultation</button>
+            <button class="btn btn-ghost">Garder</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Prochains rendez-vous</div>
+
+      <div class="card rdv-card">
+        <div class="rdv-date rdv-date-blue">
+          <div class="day">18</div><div class="month">Mar</div>
+        </div>
+        <div class="rdv-info">
+          <h4>Dr. Sophie Laurent</h4>
+          <p>Médecin généraliste · 14h30</p>
+          <div class="rdv-badges">
+            <span class="badge badge-blue">Présentiel</span>
+          </div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+
+      <div class="card rdv-card">
+        <div class="rdv-date rdv-date-teal">
+          <div class="day">25</div><div class="month">Mar</div>
+        </div>
+        <div class="rdv-info">
+          <h4>Dr. Marc Bertrand</h4>
+          <p>Dermatologue · 10h00</p>
+          <div class="rdv-badges">
+            <span class="badge badge-teal">Téléconsultation</span>
+            <span class="badge badge-green">−98% CO₂</span>
+          </div>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+
+      <div class="section-label">Ce mois-ci</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--blue-primary)">3</div>
+          <div class="stat-label">Consultations évitées</div>
+          <span class="badge badge-blue">IA préventive</span>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--green-600)">3,6 kg</div>
+          <div class="stat-label">CO₂ économisé</div>
+          <span class="badge badge-green">Éco-santé</span>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--teal-primary)">2</div>
+          <div class="stat-label">Doublons évités</div>
+          <span class="badge badge-teal">Anti-doublon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RDV -->
+    <div id="panel-rdv" class="panel">
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-segment" data-seg="1"></div>
+        <div class="progress-segment" data-seg="2"></div>
+        <div class="progress-segment" data-seg="3"></div>
+        <div class="progress-segment" data-seg="4"></div>
+        <div class="progress-segment" data-seg="5"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div id="step-1" class="step-panel active">
+        <div class="card">
+          <div class="card-title">Décrivez votre situation</div>
+          <div class="card-sub">L'IA analyse votre profil et vous oriente vers le soin le plus adapté</div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Quel est votre symptôme principal ?</div>
+          <div class="symptom-grid">
+            <div class="option-chip" data-sym="rhume">🤧 Rhume / Toux</div>
+            <div class="option-chip" data-sym="fievre">🌡️ Fièvre</div>
+            <div class="option-chip" data-sym="dos">🦴 Douleurs dos</div>
+            <div class="option-chip" data-sym="peau">👁️ Problème de peau</div>
+            <div class="option-chip" data-sym="anxiete">🧠 Anxiété / Stress</div>
+            <div class="option-chip" data-sym="autre">➕ Autre</div>
+          </div>
+        </div>
+        <button class="btn-full" id="btn-step1" disabled onclick="goStep(2)">Continuer →</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div id="step-2" class="step-panel">
+        <div class="card">
+          <div class="card-title">Depuis combien de temps ?</div>
+          <div class="card-sub">La durée est un facteur clé dans l'évaluation de l'urgence</div>
+          <div class="dur-grid">
+            <div class="dur-chip" data-dur="24h">Moins de 24h</div>
+            <div class="dur-chip" data-dur="3j">2 à 3 jours</div>
+            <div class="dur-chip" data-dur="sem">Plus d'une semaine</div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-full-ghost" onclick="goStep(1)">← Retour</button>
+          <button class="btn-full" id="btn-step2" disabled onclick="goStep(3)">Continuer →</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div id="step-3" class="step-panel">
+        <div class="card">
+          <div class="card-title">Étape 2b : Analyse Visuelle</div>
+          <div class="card-sub">Scannez votre visage pour un diagnostic plus précis</div>
+          <div class="camera-wrap">
+            <video id="cameraVideo" autoplay playsinline muted></video>
+            <div class="face-guide"><div class="face-oval"></div></div>
+            <div class="scan-line"></div>
+            <div class="camera-label">Positionnez votre visage au centre</div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-lbl">
+              <span id="scanStatusLbl">En attente de la caméra...</span>
+              <span id="scanPct">0%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" id="scanFill"></div></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-full-ghost" onclick="stopCamera(); goStep(2)">← Retour</button>
+          <button class="btn-full" onclick="stopCamera(); goStep(4)">Ignorer l'analyse</button>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div id="step-4" class="step-panel">
+        <!-- filled dynamically -->
+      </div>
+
+      <!-- Step 5 -->
+      <div id="step-5" class="step-panel">
+        <div class="confirm-box">
+          <div class="confirm-icon">✅</div>
+          <div class="confirm-title">Rendez-vous confirmé !</div>
+          <div class="confirm-sub">Dr. Sophie Laurent · Demain 14h30</div>
+        </div>
+        <div class="alert-box green" style="margin-bottom:10px;">
+          <div class="alert-icon">🌱</div>
+          <div>
+            <div class="alert-title" style="color:var(--green-600)">Vous économisez 1,18 kg de CO₂</div>
+            <div class="alert-sub">Équivalent à 6 km en voiture. Enregistré dans votre tableau de bord.</div>
+          </div>
+        </div>
+        <div class="alert-box blue" style="margin-bottom:16px;">
+          <div class="alert-icon">⚡</div>
+          <div>
+            <div class="alert-title" style="color:var(--blue-primary)">Alerte doublon envoyée au médecin</div>
+            <div class="alert-sub">Dr. Laurent a été informée de votre prise de sang du 28/02 — prescription redondante évitée.</div>
+          </div>
+        </div>
+        <button class="btn-outline" style="width:100%;padding:12px;border-radius:12px;font-size:13px;" onclick="resetRDV()">Prendre un autre rendez-vous</button>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div id="panel-chat" class="panel">
+      <div class="chat-wrapper">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-bubble bubble-ai">Bonjour Marie, je suis votre assistant Doctolib AI. Comment puis-je vous aider aujourd'hui ?</div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter') sendChat()">
+          <button class="send-btn" id="sendBtn" onclick="sendChat()">⚡</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMPACT -->
+    <div id="panel-impact" class="panel">
+      <div class="impact-hero">
+        <span>🌱</span>
+        <div>
+          <h3>Mon Impact Santé — Mars 2026</h3>
+          <p>Votre contribution à une santé plus responsable</p>
+        </div>
+      </div>
+
+      <div class="stats-grid" style="margin-bottom:24px;">
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--green-600)">3,6 kg</div>
+          <div class="stat-label">CO₂ économisé</div>
+          <span class="badge badge-green">+180% vs fév.</span>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--blue-primary)">3</div>
+          <div class="stat-label">Consultations évitées</div>
+          <span class="badge badge-blue">IA préventive</span>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--teal-primary)">2</div>
+          <div class="stat-label">Doublons bloqués</div>
+          <span class="badge badge-teal">Anti-doublon</span>
+        </div>
+      </div>
+
+      <div class="section-label">Modules actifs</div>
+
+      <div class="card module-card">
+        <div class="module-header">
+          <div class="module-left">
+            <div class="module-icon">🤖</div>
+            <div>
+              <div class="module-name">IA Préventive</div>
+              <div class="module-sub">Suggestions avant chaque RDV</div>
+            </div>
+          </div>
+          <div class="toggle"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="module-bar"><div class="module-fill" style="width:80%;background:var(--teal-primary)"></div></div>
+        <div class="module-note">Taux d'adoption : 80%</div>
+      </div>
+
+      <div class="card module-card">
+        <div class="module-header">
+          <div class="module-left">
+            <div class="module-icon">🌿</div>
+            <div>
+              <div class="module-name">Score Carbone</div>
+              <div class="module-sub">Impact CO₂ affiché sur chaque soin</div>
+            </div>
+          </div>
+          <div class="toggle"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="module-bar"><div class="module-fill" style="width:67%;background:var(--green-600)"></div></div>
+        <div class="module-note">Téléconsultation choisie 67% du temps</div>
+      </div>
+
+      <div class="card module-card">
+        <div class="module-header">
+          <div class="module-left">
+            <div class="module-icon">🔁</div>
+            <div>
+              <div class="module-name">Anti-Doublon</div>
+              <div class="module-sub">Détection d'examens redondants</div>
+            </div>
+          </div>
+          <div class="toggle"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="module-bar"><div class="module-fill" style="width:100%;background:var(--blue-primary)"></div></div>
+        <div class="module-note">2 doublons détectés ce mois</div>
+      </div>
+    </div>
+
+    <!-- PROFIL -->
+    <div id="panel-profil" class="panel">
+      <div class="card">
+        <div class="profil-top">
+          <div class="avatar-lg">MD</div>
+          <div>
+            <div class="profil-name">Marie Dupont</div>
+            <div class="profil-sub">42 ans · Paris 11e</div>
+            <span class="badge badge-green">Compte vérifié</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label" style="margin-top:0">Informations médicales</div>
+        <div class="info-row">
+          <div><div class="info-label">Médecin traitant</div><div class="info-val">Dr. Sophie Laurent</div></div>
+          <span class="edit-link">Modifier</span>
+        </div>
+        <div class="info-row">
+          <div><div class="info-label">Groupe sanguin</div><div class="info-val">A+</div></div>
+          <span class="edit-link">Modifier</span>
+        </div>
+        <div class="info-row">
+          <div><div class="info-label">Allergies connues</div><div class="info-val">Pénicilline</div></div>
+          <span class="edit-link">Modifier</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-label" style="margin-top:0">Documents récents</div>
+        <div class="info-row">
+          <div><div class="info-label">Dernière ordonnance</div><div class="info-val">Dr. Laurent · 10 mars 2026</div></div>
+          <span class="edit-link">Voir</span>
+        </div>
+        <div class="info-row">
+          <div><div class="info-label">Compte rendu biologique</div><div class="info-val">28 février 2026</div></div>
+          <span class="edit-link">Voir</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FAB -->
+  <button class="fab" onclick="alert('Assistant IA vocal activé 🎤')">🧠</button>
+</div>
+
+<script>
+// ============ DATA ============
+const DB = {
+  rhume: {
+    '24h': { ico: '🤧', ibg: '#E0F7FA', title: 'Rhume débutant — surveillance à domicile', sub: 'Symptômes récents · Faible risque de complication', tag: 'telec', tagt: 'Téléconsultation', text: 'Votre rhume a débuté depuis moins de 24h. À ce stade, les antibiotiques ne sont pas indiqués. Une téléconsultation suffit pour valider le diagnostic et orienter vers des soins symptomatiques.', pct: 72, cd: 'Recommandation fiable sur la base des données cliniques', cc: '#0097A7', risks: [['Fièvre','Non détectée','c-green'],['Durée','< 24h','c-green'],['Urgence','Faible','c-green'],['Mode','Téléconsultation','c-blue']], steps: [['normal','Téléconsultation avec votre médecin traitant dans les 24-48h'],['normal','Traitement symptomatique : paracétamol, repos, hydratation'],['normal','Surveiller l\'apparition de fièvre ou aggravation des symptômes']] },
+    '3j':  { ico: '🤧', ibg: '#E0F7FA', title: 'Rhume en cours — téléconsultation recommandée', sub: '247 cas similaires analysés · Fiabilité 80%', tag: 'telec', tagt: 'Téléconsultation', text: 'Pour un rhume de 2 à 3 jours sans fièvre, la téléconsultation est suffisante dans 80% des cas. Elle évite un déplacement inutile et le risque de contamination croisée.', pct: 80, cd: 'Haute fiabilité — recommandation validée cliniquement', cc: '#0097A7', risks: [['Fièvre','Non signalée','c-green'],['Durée','2-3 jours','c-green'],['Urgence','Faible','c-green'],['Contagiosité','Modérée','c-orange']], steps: [['normal','Téléconsultation avec Dr. Laurent — évite la salle d\'attente'],['normal','Antihistaminiques ou décongestionnants si nécessaire'],['warn','Arrêt de travail possible (ordonnance numérique)'],['normal','Retour en consultation si fièvre ou aggravation dans 48h']] },
+    'sem': { ico: '🌡️', ibg: '#FFF3E0', title: 'Rhume persistant — consultation ORL conseillée', sub: 'Durée inhabituelle · Risque de sinusite', tag: 'spec', tagt: 'Consultation spécialisée', text: 'Un rhume qui dure plus d\'une semaine peut évoluer vers une sinusite. Une consultation est recommandée pour écarter une surinfection bactérienne.', pct: 78, cd: 'Risque modéré de complication — avis médical nécessaire', cc: '#E65100', risks: [['Durée','> 7 jours','c-orange'],['Surinfection','Risque modéré','c-orange'],['Urgence','Modérée','c-orange'],['Antibiothérapie','À évaluer','c-orange']], steps: [['warn','Consultation présentielle ou ORL dans les 48h'],['normal','Bilan clinique : oreilles, gorge, sinus, poumons'],['normal','Prélèvement nasal si suspicion de surinfection'],['normal','Traitement antibiotique uniquement sur prescription']] }
+  },
+  fievre: {
+    '24h': { ico: '🌡️', ibg: '#FFF8E1', title: 'Fièvre récente — évaluation à distance possible', sub: 'Symptômes débutants · Surveillance recommandée', tag: 'telec', tagt: 'Téléconsultation', text: 'Une fièvre apparue depuis moins de 24h chez un adulte sans comorbidité peut faire l\'objet d\'une première évaluation à distance. Surveillez l\'intensité et les signes associés.', pct: 65, cd: 'Fiabilité modérée — dépend de l\'intensité de la fièvre', cc: '#E65100', risks: [['Température','À mesurer','c-orange'],['Durée','< 24h','c-green'],['Urgence','Modérée','c-orange'],['Mode','Téléconsultation','c-blue']], steps: [['normal','Mesurer la température toutes les 4h'],['normal','Téléconsultation dans les 6-12h si fièvre persistante'],['warn','Si T° > 39,5°C : consulter en urgence'],['normal','Hydratation abondante, paracétamol 1g toutes les 6h']] },
+    '3j':  { ico: '🌡️', ibg: '#FFF3E0', title: 'Fièvre persistante — consultation nécessaire', sub: '183 cas analysés · Risque de complication modéré', tag: 'pres', tagt: 'Consultation présentielle', text: 'Une fièvre qui dure 2 à 3 jours nécessite une consultation pour écarter une infection bactérienne, une grippe ou une pathologie sous-jacente. Ne tardez pas.', pct: 82, cd: 'Haute fiabilité — consultation fortement recommandée', cc: '#E65100', risks: [['Durée','2-3 jours','c-orange'],['Infection bact.','À écarter','c-orange'],['Urgence','Élevée','c-orange'],['Bilan sanguin','Possible','c-orange']], steps: [['warn','Consultation présentielle dans les 24h'],['normal','Bilan biologique : NFS, CRP si prescrit'],['normal','Antipyrétiques : paracétamol ou ibuprofène (sans contre-indication)'],['normal','Éviter l\'automédication avec des antibiotiques']] },
+    'sem': { ico: '🔴', ibg: '#FFEBEE', title: 'Fièvre prolongée — urgence médicale', sub: 'Durée anormale · Bilan approfondi indispensable', tag: 'urg', tagt: 'Urgences / Spécialiste', text: 'Une fièvre qui persiste plus d\'une semaine est une urgence médicale. Elle peut indiquer une infection grave, une maladie auto-immune ou une autre pathologie sérieuse nécessitant un bilan complet.', pct: 95, cd: 'Urgence confirmée — ne pas attendre', cc: '#D32F2F', risks: [['Durée','> 7 jours','c-orange'],['Gravité','Élevée','c-orange'],['Urgence','Critique','c-orange'],['Hospitalisation','Possible','c-orange']], steps: [['warn','Consulter aux urgences ou appeler le 15 sans délai'],['warn','Bilan sanguin complet, hémocultures si nécessaire'],['normal','Ne pas prendre d\'antibiotiques sans prescription'],['normal','Signaler tout voyage récent, contact avec personne malade']] }
+  },
+  dos: {
+    '24h': { ico: '🦴', ibg: '#F3E5F5', title: 'Douleur dorsale aiguë — probable lombalgie', sub: 'Symptômes récents · Généralement bénin', tag: 'pharma', tagt: 'Pharmacien / Kiné', text: 'Une douleur au dos apparue depuis moins de 24h est très souvent une lombalgie aiguë bénigne (lumbago). Le repos relatif, les antalgiques et la chaleur locale suffisent dans la grande majorité des cas.', pct: 76, cd: 'Recommandation fiable — lombalgie commune', cc: '#7B1FA2', risks: [['Type','Lombalgie probable','c-blue'],['Durée','< 24h','c-green'],['Urgence','Faible','c-green'],['Irradiation','Non signalée','c-green']], steps: [['normal','Antalgiques de palier 1 : paracétamol ou ibuprofène (sans CI)'],['normal','Chaleur locale : bouillotte ou patch chauffant'],['normal','Maintenir une activité légère — éviter l\'alitement prolongé'],['normal','Consulter si douleur irradie dans la jambe ou si fièvre associée']] },
+    '3j':  { ico: '🦴', ibg: '#EDE7F6', title: 'Douleur dorsale persistante — consultation recommandée', sub: '201 cas similaires · Risque de sciatique à écarter', tag: 'pres', tagt: 'Consultation présentielle', text: 'Une douleur au dos qui dure 2 à 3 jours mérite une consultation pour évaluer un risque de sciatique, hernie discale ou contracture musculaire importante. Un kiné peut être orienté rapidement.', pct: 74, cd: 'Fiabilité bonne — bilan clinique recommandé', cc: '#7B1FA2', risks: [['Sciatique','À écarter','c-orange'],['Durée','2-3 jours','c-orange'],['Urgence','Modérée','c-orange'],['Kiné','Envisageable','c-blue']], steps: [['normal','Consultation médecin traitant pour examen clinique complet'],['normal','Ordonnance kinésithérapie si contracture musculaire confirmée'],['warn','Si fourmillements ou faiblesse dans la jambe : IRM à prévoir'],['normal','Continuer les antalgiques prescrits, éviter les mouvements brusques']] },
+    'sem': { ico: '🩻', ibg: '#EDE7F6', title: 'Douleur dorsale chronique — bilan imagerie conseillé', sub: 'Durée > 7 jours · Consultation spécialisée', tag: 'spec', tagt: 'Consultation spécialisée', text: 'Une douleur dorsale persistant plus d\'une semaine nécessite un bilan radiologique (radio, IRM) pour écarter une hernie discale, spondylarthrite ou autre pathologie structurelle.', pct: 85, cd: 'Bonne fiabilité — imagerie nécessaire', cc: '#7B1FA2', risks: [['Durée','> 7 jours','c-orange'],['Hernie discale','À écarter','c-orange'],['Urgence','Modérée','c-orange'],['Imagerie','Nécessaire','c-orange']], steps: [['warn','Consultation rhumatologue ou médecin traitant avec bilan radio'],['normal','Radiographie lombaire en première intention'],['normal','IRM si suspicion de hernie discale ou pathologie neurologique'],['normal','Kinésithérapie et programme de rééducation adapté']] }
+  },
+  peau: {
+    '24h': { ico: '🔬', ibg: '#FCE4EC', title: 'Problème cutané récent — observation d\'abord', sub: 'Lésion récente · Téléconsultation dermo possible', tag: 'telec', tagt: 'Télédermato', text: 'Un problème de peau apparu depuis moins de 24h peut souvent être évalué via une téléconsultation dermatologique avec photo. Évitez d\'appliquer des produits non prescrits avant l\'avis médical.', pct: 70, cd: 'Bonne fiabilité pour les lésions superficielles', cc: '#C2185B', risks: [['Type lésion','À identifier','c-orange'],['Durée','< 24h','c-green'],['Urgence','Faible','c-green'],['Allergie','À écarter','c-orange']], steps: [['normal','Photographier la lésion en bonne lumière sous plusieurs angles'],['normal','Téléconsultation dermo avec photos dans les 24-48h'],['normal','Ne pas gratter, ni appliquer de crème sans avis médical'],['warn','Si urticaire géant ou gonflement du visage : urgence allergologique']] },
+    '3j':  { ico: '🔬', ibg: '#FCE4EC', title: 'Lésion cutanée persistante — dermatologue conseillé', sub: '156 cas · Diagnostic visuel nécessaire', tag: 'spec', tagt: 'Dermatologue', text: 'Une lésion cutanée qui évolue depuis 2 à 3 jours nécessite un avis dermatologique. Une consultation avec examen direct permet de distinguer eczéma, psoriasis, infection ou réaction allergique.', pct: 79, cd: 'Haute fiabilité — consultation dermatologique nécessaire', cc: '#C2185B', risks: [['Évolution','En cours','c-orange'],['Infection','À écarter','c-orange'],['Urgence','Modérée','c-orange'],['Allergie','Possible','c-orange']], steps: [['normal','Consultation dermatologique dans les 48-72h'],['normal','Éviter savons parfumés et frottements sur la zone affectée'],['warn','Si extension rapide ou fièvre associée : consultation urgente'],['normal','Apporter liste des produits appliqués et médicaments récents']] },
+    'sem': { ico: '🩺', ibg: '#FCE4EC', title: 'Affection cutanée chronique — bilan approfondi', sub: 'Persistance > 7 jours · Bilan allergologique possible', tag: 'spec', tagt: 'Dermatologue / Allergologue', text: 'Une affection cutanée persistant plus d\'une semaine peut indiquer une pathologie chronique (psoriasis, eczéma atopique, infection fongique) ou une réaction allergique prolongée nécessitant un bilan spécialisé.', pct: 83, cd: 'Bonne fiabilité — prise en charge spécialisée indiquée', cc: '#C2185B', risks: [['Durée','> 7 jours','c-orange'],['Chronicité','Probable','c-orange'],['Urgence','Modérée','c-orange'],['Bilan allergo','À envisager','c-orange']], steps: [['warn','Consultation dermatologue avec bilan cutané complet'],['normal','Bilan allergologique si suspicion d\'allergie de contact'],['normal','Éviter tous produits irritants jusqu\'à diagnostic'],['normal','Prélèvement cutané ou patch test si nécessaire']] }
+  },
+  anxiete: {
+    '24h': { ico: '🧠', ibg: '#E8F5E9', title: 'Stress aigu — techniques de régulation immédiates', sub: 'Épisode récent · Approche non médicamenteuse en 1ère ligne', tag: 'pharma', tagt: 'Conseil & Soutien', text: 'Un épisode de stress ou d\'anxiété survenu depuis moins de 24h peut être géré avec des techniques de régulation rapide. Une consultation n\'est pas urgente sauf si les symptômes sont très intenses.', pct: 68, cd: 'Recommandation adaptée pour anxiété situationnelle', cc: '#388E3C', risks: [['Intensité','Modérée','c-orange'],['Durée','< 24h','c-green'],['Urgence','Faible','c-green'],['Idées noires','Non signalées','c-green']], steps: [['normal','Technique de respiration 4-7-8 : inspirer 4s, retenir 7s, expirer 8s'],['normal','Cohérence cardiaque : 6 respirations/minute pendant 5 minutes'],['normal','Limiter caféine, écrans et réseaux sociaux dans les prochaines heures'],['warn','Si crise de panique ou idées noires : contacter le 3114 ou médecin']] },
+    '3j':  { ico: '🧠', ibg: '#E8F5E9', title: 'Anxiété persistante — consultation psychologique', sub: '134 cas · Accompagnement recommandé', tag: 'psy', tagt: 'Psychologue / Médecin', text: 'Une anxiété qui dure 2 à 3 jours sans amélioration mérite une consultation. Médecin traitant ou psychologue peuvent proposer un soutien adapté. Les traitements médicamenteux ne sont envisagés qu\'en dernier recours.', pct: 77, cd: 'Bonne fiabilité — accompagnement nécessaire', cc: '#388E3C', risks: [['Durée','2-3 jours','c-orange'],['Impact fonctionnel','Modéré','c-orange'],['Urgence','Modérée','c-orange'],['Médication','Non recommandée seule','c-orange']], steps: [['normal','Consultation médecin traitant ou psychologue dans les 48-72h'],['normal','Application de méditation guidée (Petit Bambou, Headspace)'],['warn','Si sommeil très perturbé : signaler au médecin'],['normal','Maintenir une activité physique légère — marche 30 min/jour']] },
+    'sem': { ico: '🧠', ibg: '#F1F8E9', title: 'Anxiété chronique — prise en charge pluridisciplinaire', sub: 'Durée > 7 jours · Suivi médical et psychologique', tag: 'spec', tagt: 'Psychiatre / Psychologue', text: 'Une anxiété persistant plus d\'une semaine avec retentissement sur le quotidien nécessite une prise en charge structurée : thérapie cognitivo-comportementale (TCC), bilan médical et éventuellement traitement médicamenteux adapté.', pct: 88, cd: 'Haute fiabilité — prise en charge spécialisée indiquée', cc: '#388E3C', risks: [['Durée','> 7 jours','c-orange'],['Retentissement','Élevé','c-orange'],['Urgence','Modérée','c-orange'],['TCC','Indiquée','c-blue']], steps: [['warn','Consultation psychiatre ou médecin traitant pour bilan complet'],['normal','Thérapie cognitivo-comportementale (TCC) — efficacité prouvée'],['normal','Bilan thyroïdien pour écarter cause organique'],['normal','Numéro national prévention suicide : 3114 (disponible 24h/24)']] }
+  },
+  autre: {
+    '24h': { ico: '➕', ibg: '#E3F2FD', title: 'Symptôme non spécifié — orientation générale', sub: 'Symptôme récent · Évaluation médicale conseillée', tag: 'telec', tagt: 'Téléconsultation', text: 'Pour un symptôme apparu depuis moins de 24h que vous ne pouvez pas précisément catégoriser, une téléconsultation avec votre médecin traitant est la meilleure approche pour obtenir une orientation adaptée.', pct: 60, cd: 'Fiabilité limitée sans précision du symptôme', cc: '#1565C0', risks: [['Symptôme','Non précisé','c-orange'],['Durée','< 24h','c-green'],['Urgence','À évaluer','c-orange'],['Mode','Téléconsultation','c-blue']], steps: [['normal','Téléconsultation avec votre médecin traitant dans les 24h'],['normal','Notez vos symptômes avec précision : localisation, intensité, facteurs déclenchants'],['warn','Si douleur thoracique, essoufflement ou malaise : appeler le 15'],['normal','Évitez l\'automédication avant d\'avoir un diagnostic']] },
+    '3j':  { ico: '➕', ibg: '#E3F2FD', title: 'Symptôme persistant — consultation présentielle', sub: 'Durée inhabituelle · Examen clinique nécessaire', tag: 'pres', tagt: 'Consultation présentielle', text: 'Un symptôme mal identifié qui persiste depuis 2 à 3 jours nécessite un examen clinique en présentiel. Le médecin pourra poser un diagnostic précis et prescrire les examens complémentaires adaptés.', pct: 75, cd: 'Bonne fiabilité — examen physique indispensable', cc: '#1565C0', risks: [['Durée','2-3 jours','c-orange'],['Diagnostic','Incertain','c-orange'],['Urgence','Modérée','c-orange'],['Bilan','Possible','c-orange']], steps: [['warn','Consultation présentielle médecin traitant dans les 24-48h'],['normal','Préparez un résumé écrit de vos symptômes et de leur évolution'],['normal','Apportez votre carnet de santé et liste des médicaments pris'],['normal','Des examens complémentaires (bilan sanguin, radio) pourront être prescrits']] },
+    'sem': { ico: '➕', ibg: '#E3F2FD', title: 'Symptôme prolongé — bilan médical complet', sub: 'Persistance > 7 jours · Consultation spécialisée envisageable', tag: 'spec', tagt: 'Consultation spécialisée', text: 'Un symptôme qui dure plus d\'une semaine sans amélioration mérite un bilan médical complet. Ne tardez pas : votre médecin traitant pourra vous orienter vers le spécialiste approprié selon le diagnostic établi.', pct: 80, cd: 'Bonne fiabilité — prise en charge médicale nécessaire', cc: '#1565C0', risks: [['Durée','> 7 jours','c-orange'],['Cause','Inconnue','c-orange'],['Urgence','Modérée-élevée','c-orange'],['Spécialiste','À orienter','c-orange']], steps: [['warn','Consultation médecin traitant pour bilan approfondi sans délai'],['normal','Bilan biologique complet selon orientation clinique'],['normal','Orientation vers spécialiste adapté après diagnostic initial'],['normal','Tenez un journal des symptômes : heure, intensité, facteurs aggravants']] }
+  }
+};
+
+
+// ============ STATE ============
+let currentTab = 'home';
+let currentStep = 1;
+let selectedSym = null;
+let selectedDur = null;
+let selectedMode = 'telec';
+let scanTimer = null;
+let scanProgressTimer = null;
+let scanPct = 0;
+let cameraStream = null;
+let chatMessages = [{ role: 'ai', text: "Bonjour Marie, je suis votre assistant Doctolib AI. Comment puis-je vous aider aujourd'hui ?" }];
+
+// ============ TABS ============
+document.querySelectorAll('.tab-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const id = tab.dataset.tab;
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+    currentTab = id;
+    if (id === 'rdv') renderStep(currentStep);
+  });
+});
+
+// ============ STEP LOGIC ============
+function goStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+  updateProgress();
+  if (n === 3) startScan();
+  if (n === 4) buildStep4();
+}
+
+function updateProgress() {
+  document.querySelectorAll('.progress-segment').forEach((seg, i) => {
+    const si = i + 1;
+    seg.classList.remove('done', 'current');
+    if (si < currentStep) seg.classList.add('done');
+    else if (si === currentStep) seg.classList.add('current');
+  });
+}
+
+function renderStep(n) { goStep(n); }
+
+// Symptom selection
+document.querySelectorAll('.option-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    selectedSym = chip.dataset.sym;
+    document.getElementById('btn-step1').disabled = false;
+  });
+});
+
+// Duration selection
+document.querySelectorAll('.dur-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.dur-chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    selectedDur = chip.dataset.dur;
+    document.getElementById('btn-step2').disabled = false;
+  });
+});
+
+// ============ CAMERA / SCAN ============
+async function startScan() {
+  scanPct = 0;
+  updateScan(0);
+  clearInterval(scanProgressTimer);
+  clearTimeout(scanTimer);
+
+  // Show waiting state
+  const lbl = document.getElementById('scanStatusLbl');
+  if (lbl) { lbl.textContent = 'En attente de la caméra...'; }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 1280 } } 
+    });
+    cameraStream = stream;
+    const video = document.getElementById('cameraVideo');
+    video.srcObject = stream;
+    // Wait for video to actually play before starting timer
+    await new Promise(resolve => {
+      video.onloadedmetadata = () => { video.play(); resolve(); };
+      video.onplaying = resolve; // fallback
+      setTimeout(resolve, 1500); // safety fallback
+    });
+    if (lbl) { lbl.textContent = 'Analyse en cours...'; }
+  } catch(e) {
+    console.log('Camera unavailable:', e);
+    const lbl = document.getElementById('scanStatusLbl');
+    if (lbl) { lbl.textContent = 'Caméra non disponible — analyse simulée'; }
+  }
+
+  // Start progress ONLY after camera is ready (or failed gracefully)
+  const duration = 10000, interval = 80;
+  let elapsed = 0;
+  scanProgressTimer = setInterval(() => {
+    elapsed += interval;
+    const pct = Math.min((elapsed / duration) * 100, 100);
+    updateScan(pct);
+  }, interval);
+  scanTimer = setTimeout(() => {
+    clearInterval(scanProgressTimer);
+    stopCamera();
+    goStep(4);
+  }, duration);
+}
+
+function stopCamera() {
+  clearTimeout(scanTimer);
+  clearInterval(scanProgressTimer);
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+}
+
+function updateScan(pct) {
+  document.getElementById('scanPct').textContent = Math.round(pct) + '%';
+  document.getElementById('scanFill').style.width = pct + '%';
+}
+
+// ============ BUILD STEP 4 ============
+function buildStep4() {
+  const res = (DB[selectedSym] && DB[selectedSym][selectedDur]) ? DB[selectedSym][selectedDur] : (DB[selectedSym] ? DB[selectedSym]['24h'] : DB['autre']['24h']);
+  const tagVariant = res.tag === 'telec' ? 'badge-teal' : 'badge-orange';
+
+  const risksHTML = res.risks.map(r => `
+    <div class="indicator-box">
+      <div class="indicator-lbl">${r[0]}</div>
+      <div class="indicator-val ${r[2]}">${r[1]}</div>
+    </div>`).join('');
+
+  const stepsHTML = res.steps.map((s, i) => `
+    <div class="plan-step">
+      <div class="step-num ${s[0]}">${i+1}</div>
+      <div class="step-text">${s[1]}</div>
+    </div>`).join('');
+
+  document.getElementById('step-4').innerHTML = `
+    <div class="alert-box orange">
+      <div class="alert-icon">⚠️</div>
+      <div>
+        <div class="alert-title" style="color:var(--orange-primary)">Bilan potentiellement redondant détecté</div>
+        <div class="alert-sub">Prise de sang réalisée le 28/02 (17 jours). Votre médecin sera alerté automatiquement.</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-icon" style="background:${res.ibg}">${res.ico}</div>
+        <div style="flex:1">
+          <div class="result-title">${res.title}</div>
+          <div class="result-sub">${res.sub}</div>
+        </div>
+        <span class="badge ${tagVariant}">${res.tagt}</span>
+      </div>
+      <div class="result-text">${res.text}</div>
+
+      <div class="conf-label">Confiance de l'IA</div>
+      <div class="conf-track"><div class="conf-fill" id="confFill" style="background:${res.cc};width:0%"></div></div>
+      <div class="conf-meta"><span>${res.cd}</span><strong>${res.pct}%</strong></div>
+
+      <div class="divider"></div>
+      <div class="conf-label">Indicateurs cliniques</div>
+      <div class="indicators-grid">${risksHTML}</div>
+
+      <div class="divider"></div>
+      <div class="conf-label">Plan de soin recommandé</div>
+      <div>${stepsHTML}</div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px;">Comparaison impact carbone</div>
+      <div style="font-size:10px;color:var(--gray-muted);margin-bottom:12px;">Choisissez votre mode de consultation</div>
+      <div class="mode-grid">
+        <div class="mode-chip ${selectedMode==='telec'?'selected-green':''}" id="mode-telec" onclick="selectMode('telec')">
+          <div class="mode-big" style="color:var(--green-600)">0,02 kg</div>
+          <div class="mode-unit">CO₂ émis</div>
+          <div class="mode-name">Téléconsultation</div>
+          <div style="margin-top:5px;"><span style="background:var(--green-600);color:white;border-radius:10px;padding:2px 8px;font-size:9px;font-weight:700;">🌱 Recommandé</span></div>
+        </div>
+        <div class="mode-chip ${selectedMode==='pres'?'selected-blue':''}" id="mode-pres" onclick="selectMode('pres')">
+          <div class="mode-big" style="color:var(--gray-muted)">1,2 kg</div>
+          <div class="mode-unit">CO₂ émis</div>
+          <div class="mode-name">Présentiel</div>
+          <div style="margin-top:5px;font-size:9px;color:var(--gray-muted)">×60 de différence</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-full-ghost" onclick="goStep(3)">← Retour</button>
+      <button class="btn-full" onclick="goStep(5)">Confirmer →</button>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const fill = document.getElementById('confFill');
+    if (fill) fill.style.width = res.pct + '%';
+  }, 100);
+}
+
+function selectMode(m) {
+  selectedMode = m;
+  document.getElementById('mode-telec').className = 'mode-chip' + (m==='telec'?' selected-green':'');
+  document.getElementById('mode-pres').className = 'mode-chip' + (m==='pres'?' selected-blue':'');
+}
+
+function resetRDV() {
+  selectedSym = null; selectedDur = null; selectedMode = 'telec'; currentStep = 1;
+  document.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.dur-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('btn-step1').disabled = true;
+  goStep(1);
+}
+
+// ============ CHAT ============
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  appendBubble('user', msg);
+  showTyping(true);
+  document.getElementById('sendBtn').disabled = true;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `Tu es l'Expert Médical de Doctolib AI. Aide les patients (comme Marie) à décrypter leurs symptômes avec rigueur clinique. Oriente vers le parcours de soin le plus adapté. En cas d'urgence grave (douleur thoracique, difficultés respiratoires), dis d'appeler le 15. Réponds en français, avec un ton empathique et professionnel. Rappelle que tu es une IA et ne remplace pas un médecin. Utilise des emojis médicaux (🩺, 🌡️, 💊).`,
+        messages: buildChatHistory(msg)
+      })
+    });
+    const data = await response.json();
+    const text = data.content?.[0]?.text || "Je n'ai pas pu traiter votre message. Réessayez.";
+    showTyping(false);
+    appendBubble('ai', text);
+    chatMessages.push({ role: 'user', text: msg }, { role: 'ai', text });
+  } catch(e) {
+    showTyping(false);
+    appendBubble('ai', "Désolé Marie, j'ai rencontré une difficulté technique. En cas d'urgence, contactez le 15. 🚑");
+  }
+
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function buildChatHistory(newMsg) {
+  const history = [];
+  for (const m of chatMessages) {
+    history.push({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.text });
+  }
+  history.push({ role: 'user', content: newMsg });
+  return history;
+}
+
+function appendBubble(role, text) {
+  const div = document.getElementById('chatMessages');
+  const bub = document.createElement('div');
+  bub.className = 'chat-bubble ' + (role === 'user' ? 'bubble-user' : 'bubble-ai');
+  bub.textContent = text;
+  div.appendChild(bub);
+  div.scrollTop = div.scrollHeight;
+}
+
+function showTyping(show) {
+  const existing = document.getElementById('typingIndicator');
+  if (existing) existing.remove();
+  if (show) {
+    const div = document.getElementById('chatMessages');
+    const ind = document.createElement('div');
+    ind.id = 'typingIndicator';
+    ind.className = 'chat-bubble bubble-ai';
+    ind.innerHTML = '<div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+    div.appendChild(ind);
+    div.scrollTop = div.scrollHeight;
+  }
+}
+</script>
+</body>
+</html>
